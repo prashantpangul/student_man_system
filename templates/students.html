@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Student Management System</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <h1>Student Management System</h1>
+
+    <nav>
+        <a href="/">Home</a> |
+        <a href="/students">Student List</a> |
+        <a href="/add-student">Add Student</a>
+    </nav>
+
+    <hr>
+
+    <h2>Student List</h2>
+
+    <table class="student-table">
+
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Course</th>
+            <th>Age</th>
+            <th>Action</th>
+        </tr>
+
+        {% for student in students %}
+
+        <tr>
+
+            <td>{{ student[0] }}</td>
+            <td>{{ student[1] }}</td>
+            <td>{{ student[2] }}</td>
+            <td>{{ student[3] }}</td>
+            <td>{{ student[4] }}</td>
+            <td>{{ student[5] }}</td>
+
+            <td>
+
+                <a href="/edit-student/{{ student[0] }}"
+                   class="edit-link">
+                    Edit
+                </a>
+
+                |
+
+                <a href="/delete-student/{{ student[0] }}"
+                   class="delete-link"
+                   onclick="return confirm('Are you sure you want to delete this student?');">
+                    Delete
+                </a>
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+</body>
+
+</html>

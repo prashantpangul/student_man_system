@@ -1,0 +1,246 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f6f8;
+}
+
+h1 {
+    background-color: #2c3e50;
+    color: white;
+    margin: 0;
+    padding: 20px;
+}
+
+h2 {
+    color: #2c3e50;
+}
+
+nav {
+    background-color: #34495e;
+    padding: 15px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+hr {
+    display: none;
+}
+
+form {
+    background-color: white;
+    width: 400px;
+    padding: 25px;
+    margin-top: 20px;
+    border-radius: 8px;
+}
+
+input {
+    width: 95%;
+    padding: 8px;
+    margin-top: 5px;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    background-color: #2980b9;
+    color: white;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #1f618d;
+}
+
+table {
+    width: 100%;
+    background-color: white;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th {
+    background-color: #34495e;
+    color: white;
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+td a {
+    text-decoration: none;
+    margin-right: 5px;
+}
+
+.delete-link {
+    color: red;
+    background: none;
+    text-decoration: none;
+}
+
+.delete-link:hover {
+    color: darkred;
+    text-decoration: underline;
+}
+
+.edit-link {
+    color: #2980b9;
+    background: none;
+    text-decoration: none;
+}
+
+.edit-link:hover {
+    color: #1f618d;
+    text-decoration: underline;
+}
+
+.delete-link {
+    color: red;
+    background: none;
+    text-decoration: none;
+}
+
+.delete-link:hover {
+    color: darkred;
+    text-decoration: underline;
+}
+
+.dashboard {
+    display: flex;
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.card {
+    background-color: white;
+    padding: 25px;
+    width: 250px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card h3 {
+    color: #2c3e50;
+}
+
+.card p {
+    font-size: 35px;
+    font-weight: bold;
+    color: #2980b9;
+}
+
+.card a {
+    color: #2980b9;
+    text-decoration: none;
+}
+
+.card a:hover {
+    text-decoration: underline;
+}
+
+.form-container {
+    width: 450px;
+    margin: 30px auto;
+}
+
+.form-container h2 {
+    text-align: center;
+}
+
+.form-container form {
+    width: auto;
+}
+
+.form-container label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.form-container input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.form-container input:focus {
+    outline: none;
+    border-color: #2980b9;
+}
+
+.form-container button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    font-size: 16px;
+}
+
+.back-link {
+    text-decoration: none;
+    color: #2980b9;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+.student-table {
+    width: 95%;
+    margin: 25px auto;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.student-table th {
+    background-color: #34495e;
+    color: white;
+    padding: 14px;
+    text-align: left;
+}
+
+.student-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #ddd;
+}
+
+.student-table tr:hover {
+    background-color: #f2f6f9;
+}
+
+.student-table .edit-link {
+    color: #2980b9;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.student-table .delete-link {
+    color: red;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.student-table .edit-link:hover {
+    color: #1f618d;
+    text-decoration: underline;
+}
+
+.student-table .delete-link:hover {
+    color: darkred;
+    text-decoration: underline;
+}
