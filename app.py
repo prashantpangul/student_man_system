@@ -21,21 +21,30 @@ def _student_form_values():
     )
 
 
+# Dashboard
 @app.route("/")
 def home():
     connection = get_connection()
 
     try:
         with connection.cursor() as cursor:
-            cursor.execute("SELECT COUNT(*) AS total FROM students")
-            result = cursor.fetchone()
-            total_students = result[0]
+            cursor.execute("SELECT COUNT(*) FROM students")
+            total_students = cursor.fetchone()[0]
+
+            cursor.execute("""
+                SELECT COUNT(DISTINCT course)
+                FROM students
+                WHERE course IS NOT NULL AND course != ''
+            """)
+            total_courses = cursor.fetchone()[0]
+
     finally:
         connection.close()
 
     return render_template(
         "home.html",
-        total_students=total_students
+        total_students=total_students,
+        total_courses=total_courses
     )
 
 
@@ -43,7 +52,6 @@ def home():
 @app.route("/students")
 def students():
     search = request.args.get("search", "").strip()
-
     connection = get_connection()
 
     try:
@@ -56,17 +64,10 @@ def students():
                        OR course LIKE %s
                     ORDER BY id DESC
                 """
-
                 keyword = f"%{search}%"
-
-                cursor.execute(
-                    query,
-                    (keyword, keyword, keyword)
-                )
+                cursor.execute(query, (keyword, keyword, keyword))
             else:
-                cursor.execute(
-                    "SELECT * FROM students ORDER BY id DESC"
-                )
+                cursor.execute("SELECT * FROM students ORDER BY id DESC")
 
             student_rows = cursor.fetchall()
 
@@ -77,6 +78,31 @@ def students():
         "students.html",
         students=student_rows,
         search=search
+    )
+
+
+# Course-wise student report
+@app.route("/course-report")
+def course_report():
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT course, COUNT(*) AS student_count
+                FROM students
+                WHERE course IS NOT NULL AND course != ''
+                GROUP BY course
+                ORDER BY course
+            """)
+            course_rows = cursor.fetchall()
+
+    finally:
+        connection.close()
+
+    return render_template(
+        "course_report.html",
+        courses=course_rows
     )
 
 
@@ -158,10 +184,7 @@ def edit_student(id):
     if request.method == "POST":
         return redirect(url_for("students"))
 
-    return render_template(
-        "edit_student.html",
-        student=student
-    )
+    return render_template("edit_student.html", student=student)
 
 
 # Delete a student

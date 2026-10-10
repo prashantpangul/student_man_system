@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course-wise Student Report</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <h1>Student Management System</h1>
+
+    <nav>
+        <a href="/">Home</a> |
+        <a href="/students">Student List</a> |
+        <a href="/add-student">Add Student</a> |
+        <a href="/course-report">Course Report</a>
+    </nav>
+
+    <hr>
+
+    <h2>Course-wise Student Report</h2>
+    <p>This report shows the number of students enrolled in each course.</p>
+
+    <table class="student-table">
+        <thead>
+            <tr>
+                <th>Sr. No.</th>
+                <th>Course Name</th>
+                <th>Total Students</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for course in courses %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ course[0] }}</td>
+                <td>{{ course[1] }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="3">No course records found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <p>
+        <a href="/">Back to Dashboard</a>
+    </p>
+</body>
+</html>

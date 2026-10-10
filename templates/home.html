@@ -1,50 +1,43 @@
+
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Management System</title>
-
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-
     <h1>Student Management System</h1>
 
-    <nav>
-        <a href="/">Home</a> |
-        <a href="/students">Student List</a> |
-        <a href="/add-student">Add Student</a>
-    </nav>
+  
+<nav>
+    <a href="/">Home</a> |
+    <a href="/students">Student List</a> |
+    <a href="/add-student">Add Student</a> |
+    <a href="/course-report">Course Report</a>
+</nav>
+
 
     <hr>
 
     <h2>Dashboard</h2>
+    <p>Welcome to the College Student Management System.</p>
 
-    <div class="dashboard">
-
-        <div class="card">
+    <div class="dashboard-cards">
+        <div class="dashboard-card">
             <h3>Total Students</h3>
-            <p>{{ total_students }}</p>
+            <p class="dashboard-number">{{ total_students }}</p>
+            <a href="{{ url_for('students') }}">View Students</a>
         </div>
 
-        <div class="card">
-            <h3>Student Management</h3>
-
-            <a href="/students">
-                View Students
-            </a>
-
-            <br><br>
-
-            <a href="/add-student">
-                Add New Student
-            </a>
+        <div class="dashboard-card">
+            <h3>Total Courses</h3>
+            <p class="dashboard-number">{{ total_courses }}</p>
+            <a href="{{ url_for('students') }}">View Enrollments</a>
         </div>
-
     </div>
-
 </body>
-
 </html>

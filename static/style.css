@@ -244,3 +244,58 @@ td a {
     color: darkred;
     text-decoration: underline;
 }
+
+
+/* Dashboard layout */
+.dashboard-cards {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-top: 25px;
+}
+
+/* Dashboard summary cards */
+.dashboard-card {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 24px;
+    width: 240px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.dashboard-card h3 {
+    margin-top: 0;
+    color: #333333;
+}
+
+.dashboard-number {
+    font-size: 36px;
+    font-weight: bold;
+    color: #2563eb;
+    margin: 16px 0;
+}
+
+.dashboard-card a {
+    display: inline-block;
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.dashboard-card a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive layout for small screens */
+@media (max-width: 600px) {
+    .dashboard-card {
+        width: 100%;
+    }
+}
