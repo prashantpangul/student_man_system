@@ -4,40 +4,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Student Management System</title>
+
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        /* Popup notification */
+        .popup-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            width: max-content;
+            max-width: 90%;
+        }
+
+        .popup-message {
+            padding: 14px 24px;
+            border-radius: 8px;
+            color: white;
+            background-color: #27ae60;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            font-size: 15px;
+            animation: popupFade 2s forwards;
+        }
+
+        .popup-message.danger,
+        .popup-message.error {
+            background-color: #e74c3c;
+        }
+
+        .popup-message.warning {
+            background-color: #f39c12;
+        }
+
+        .popup-message.info {
+            background-color: #2980b9;
+        }
+
+        @keyframes popupFade {
+            0%, 75% {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            100% {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Student Management System</h1>
 
-  
-<nav>
-    <a href="/">Home</a> |
-    <a href="/students">Student List</a> |
-    <a href="/add-student">Add Student</a> |
-    <a href="/course-report">Course Report</a>
-</nav>
+    <!-- Header: title left, account details right -->
+    <header class="main-header">
+        <h1>Student Management System</h1>
 
+        {% if session.get('admin_id') %}
+        <div class="header-account">
+            <span>
+                Logged in as:
+                {{ session.get('admin_username', 'Admin') }}
+            </span>
 
-    <hr>
-
-    <h2>Dashboard</h2>
-    <p>Welcome to the College Student Management System.</p>
-
-    <div class="dashboard-cards">
-        <div class="dashboard-card">
-            <h3>Total Students</h3>
-            <p class="dashboard-number">{{ total_students }}</p>
-            <a href="{{ url_for('students') }}">View Students</a>
+            <form action="{{ url_for('logout') }}" method="POST">
+                <button type="submit">Logout</button>
+            </form>
         </div>
+        {% endif %}
+    </header>
 
-        <div class="dashboard-card">
-            <h3>Total Courses</h3>
-            <p class="dashboard-number">{{ total_courses }}</p>
-            <a href="{{ url_for('students') }}">View Enrollments</a>
+    <!-- Navigation -->
+    <nav>
+        <a href="{{ url_for('home') }}">Home</a> |
+        <a href="{{ url_for('students') }}">Student List</a> |
+        <a href="{{ url_for('add_student') }}">Add Student</a> |
+        <a href="{{ url_for('course_report') }}">Course Report</a>
+    </nav>
+
+    <!-- Popup success and error messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="popup-container" id="flashPopup">
+            {% for category, message in messages %}
+            <div class="popup-message {{ category }}" role="status">
+                {{ message }}
+            </div>
+            {% endfor %}
         </div>
-    </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Dashboard -->
+    <main>
+        <h2>Dashboard</h2>
+
+        <p>Welcome to the College Student Management System.</p>
+
+        <div class="dashboard-cards">
+
+            <!-- Total Students -->
+            <div class="dashboard-card">
+                <h3>Total Students</h3>
+
+                <p class="dashboard-number">
+                    {{ total_students }}
+                </p>
+
+                <a href="{{ url_for('students') }}">
+                    View Students
+                </a>
+            </div>
+
+            <!-- Total Courses -->
+            <div class="dashboard-card">
+                <h3>Total Courses</h3>
+
+                <p class="dashboard-number">
+                    {{ total_courses }}
+                </p>
+
+                <a href="{{ url_for('students') }}">
+                    View Enrollments
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>Student Management System | College Project</p>
+    </footer>
+
 </body>
 </html>

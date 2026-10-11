@@ -1,3 +1,4 @@
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -16,6 +17,53 @@ h2 {
     color: #2c3e50;
 }
 
+/* Header: title left, account controls right */
+header.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 25px;
+    background-color: #2c3e50;
+}
+
+header.main-header h1 {
+    background: transparent;
+    color: white;
+    padding: 20px 0;
+    margin: 0;
+    text-align: left;
+}
+
+.header-account {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-left: auto;
+    color: white;
+    flex-shrink: 0;
+}
+
+.header-account form {
+    width: auto;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+}
+
+.header-account button {
+    display: inline-block;
+    width: auto;
+    margin: 0;
+    padding: 10px 20px;
+    white-space: nowrap;
+}
+
+/* Navigation bar */
 nav {
     background-color: #34495e;
     padding: 15px;
@@ -35,6 +83,7 @@ hr {
     display: none;
 }
 
+/* General forms */
 form {
     background-color: white;
     width: 400px;
@@ -49,6 +98,7 @@ input {
     margin-top: 5px;
 }
 
+/* Buttons */
 button {
     padding: 10px 20px;
     border: none;
@@ -62,6 +112,7 @@ button:hover {
     background-color: #1f618d;
 }
 
+/* Tables */
 table {
     width: 100%;
     background-color: white;
@@ -74,7 +125,8 @@ th {
     color: white;
 }
 
-th, td {
+th,
+td {
     padding: 12px;
     border: 1px solid #ddd;
     text-align: left;
@@ -85,6 +137,7 @@ td a {
     margin-right: 5px;
 }
 
+/* Delete links */
 .delete-link {
     color: red;
     background: none;
@@ -96,6 +149,7 @@ td a {
     text-decoration: underline;
 }
 
+/* Edit links */
 .edit-link {
     color: #2980b9;
     background: none;
@@ -107,17 +161,7 @@ td a {
     text-decoration: underline;
 }
 
-.delete-link {
-    color: red;
-    background: none;
-    text-decoration: none;
-}
-
-.delete-link:hover {
-    color: darkred;
-    text-decoration: underline;
-}
-
+/* Dashboard layout */
 .dashboard {
     display: flex;
     gap: 30px;
@@ -151,6 +195,7 @@ td a {
     text-decoration: underline;
 }
 
+/* Add and edit student forms */
 .form-container {
     width: 450px;
     margin: 30px auto;
@@ -199,6 +244,8 @@ td a {
 .back-link:hover {
     text-decoration: underline;
 }
+
+/* Student table */
 .student-table {
     width: 95%;
     margin: 25px auto;
@@ -245,8 +292,7 @@ td a {
     text-decoration: underline;
 }
 
-
-/* Dashboard layout */
+/* Dashboard summary cards */
 .dashboard-cards {
     display: flex;
     gap: 24px;
@@ -254,7 +300,6 @@ td a {
     margin-top: 25px;
 }
 
-/* Dashboard summary cards */
 .dashboard-card {
     background: #ffffff;
     border: 1px solid #e0e0e0;
@@ -294,8 +339,16 @@ td a {
 }
 
 /* Responsive layout for small screens */
-@media (max-width: 600px) {
+@media (max-width: 650px) {
     .dashboard-card {
         width: 100%;
+    }
+
+    header.main-header {
+        flex-wrap: wrap;
+    }
+
+    .header-account {
+        margin: 0 0 15px 0;
     }
 }

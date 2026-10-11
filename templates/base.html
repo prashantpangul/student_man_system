@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Student Management System{% endblock %}</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header>
+        <h1>Student Management System</h1>
+
+        
+<nav>
+    <a href="{{ url_for('home') }}">Home</a> |
+    <a href="{{ url_for('students') }}">Student List</a> |
+    <a href="{{ url_for('add_student') }}">Add Student</a> |
+    <a href="{{ url_for('course_report') }}">Course Report</a>
+
+    {% if session.get('admin_id') %}
+        | Logged in as: {{ session.get('admin_username', 'Admin') }}
+
+        <form action="{{ url_for('logout') }}"
+              method="POST"
+              style="display: inline;">
+            <button type="submit">Logout</button>
+        </form>
+    {% endif %}
+</nav>
+
+    </header>
+
+    <!-- Display success and error messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="flash-message {{ category }}" role="status">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>Student Management System | College Project</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Login - Student Management System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <h1>Student Management System</h1>
+
+    <hr>
+
+    <h2>Admin Login</h2>
+
+    <p>Please log in to access the Student Management System.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p class="{{ category }}">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form action="{{ url_for('login') }}" method="POST">
+        <p>
+            <label for="username">Username:</label><br>
+
+            <input
+                type="text"
+                id="username"
+                name="username"
+                maxlength="50"
+                autocomplete="username"
+                required
+            >
+        </p>
+
+        <p>
+            <label for="password">Password:</label><br>
+
+            <input
+                type="password"
+                id="password"
+                name="password"
+                autocomplete="current-password"
+                required
+            >
+        </p>
+
+        <button type="submit">Login</button>
+    </form>
+</body>
+</html>
