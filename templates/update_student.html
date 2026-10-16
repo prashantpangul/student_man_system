@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Update Student - Student Management System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+    <h1>Student Management System</h1>
+
+    <nav>
+        <a href="{{ url_for('home') }}">Home</a> |
+        <a href="{{ url_for('students') }}">Student List</a> |
+        <a href="{{ url_for('add_student') }}">Add Student</a> |
+        <a href="{{ url_for('course_report') }}">Course Report</a>
+    </nav>
+
+    <div class="form-container form-wide">
+        <h2>Update Student #{{ student[0] }}</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <p class="flash-{{ category }}">{{ message }}</p>
+            {% endfor %}
+        {% endwith %}
+
+        <form method="POST"
+              action="{{ url_for('update_student', id=student[0]) }}">
+
+            <!-- Student information -->
+            <h3 class="form-section-title">Student Information</h3>
+
+            <div class="form-grid">
+                <div class="full">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name"
+                           value="{{ student[1] }}" required>
+                </div>
+
+                <div>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email"
+                           value="{{ student[2] or '' }}">
+                </div>
+
+                <div>
+                    <label for="phone">Phone</label>
+                    <input type="text" id="phone" name="phone"
+                           value="{{ student[3] or '' }}">
+                </div>
+
+                <div>
+                    <label for="course">Course</label>
+                    <input type="text" id="course" name="course"
+                           value="{{ student[4] or '' }}">
+                </div>
+
+                <div>
+                    <label for="age">Age</label>
+                    <input type="number" id="age" name="age"
+                           min="1" max="100"
+                           value="{{ student[5] if student[5] is not none else '' }}">
+                </div>
+            </div>
+
+            <!-- Fee details -->
+            <h3 class="form-section-title">Fee Details</h3>
+
+            {% if is_admin %}
+                <div class="form-grid">
+                    <div>
+                        <label for="total_fee">Total Fee (₹)</label>
+                        <input type="number" id="total_fee" name="total_fee"
+                               step="0.01" min="0"
+                               value="{{ '%.2f'|format(total_fee | float) }}"
+                               required>
+                    </div>
+
+                    <div>
+                        <label for="paid_amount">Paid Amount (₹)</label>
+                        <input type="number" id="paid_amount" name="paid_amount"
+                               step="0.01" min="0"
+                               value="{{ '%.2f'|format(paid_amount | float) }}"
+                               required>
+                    </div>
+                </div>
+
+                <div class="fee-summary">
+                    <span>Balance</span>
+                    <strong id="balance">₹0.00</strong>
+                </div>
+
+            {% else %}
+                <div class="fee-summary">
+                    <span>Total: ₹{{ "{:,.2f}".format(total_fee | float) }}</span>
+                    <span>Paid: ₹{{ "{:,.2f}".format(paid_amount | float) }}</span>
+                    <strong>
+                        Balance: ₹{{ "{:,.2f}".format((total_fee - paid_amount) | float) }}
+                    </strong>
+                </div>
+                <p class="form-note">Only an admin can change fee details.</p>
+            {% endif %}
+
+            <div class="form-actions">
+                <button type="submit">Update</button>
+                <a href="{{ url_for('students') }}" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    {% if is_admin %}
+    <script>
+        const totalInput = document.getElementById('total_fee');
+        const paidInput = document.getElementById('paid_amount');
+        const balanceBox = document.getElementById('balance');
+
+        function showBalance() {
+            const total = parseFloat(totalInput.value) || 0;
+            const paid = parseFloat(paidInput.value) || 0;
+            const balance = total - paid;
+
+            balanceBox.textContent = '₹' + balance.toFixed(2);
+            balanceBox.style.color = balance < 0 ? '#dc3545' : '#2c3e50';
+        }
+
+        totalInput.addEventListener('input', showBalance);
+        paidInput.addEventListener('input', showBalance);
+        showBalance();
+    </script>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Student Fees</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Student Management System</h1>
+
+    <nav>
+        <a href="{{ url_for('home') }}">Home</a> |
+        <a href="{{ url_for('students') }}">Student List</a> |
+        <a href="{{ url_for('add_student') }}">Add Student</a> |
+        <a href="{{ url_for('course_report') }}">Course Report</a>
+    </nav>
+
+    <hr>
+
+    <h2>Update Student Fees</h2>
+    <h3>{{ student[1] }}</h3>
+
+    <form method="POST">
+        <p>
+            <label for="total_fee">Total Fee (₹)</label><br>
+            <input
+                type="number"
+                id="total_fee"
+                name="total_fee"
+                min="0"
+                max="99999999.99"
+                step="0.01"
+                value="{{ total_fee }}"
+                required>
+        </p>
+
+        <p>
+            <label for="paid_amount">Paid Amount (₹)</label><br>
+            <input
+                type="number"
+                id="paid_amount"
+                name="paid_amount"
+                min="0"
+                max="99999999.99"
+                step="0.01"
+                value="{{ paid_amount }}"
+                required>
+        </p>
+
+        <button type="submit">Save Fee Details</button>
+        <a href="{{ url_for('students') }}">Cancel</a>
+    </form>
+</body>
+</html>

@@ -64,7 +64,7 @@
 
     <!-- Header: title left, account details right -->
     <header class="main-header">
-        <h1>Student Management System</h1>
+        <h1>STUDENTS MANAGEMENT SYSTEM</h1>
 
         {% if session.get('admin_id') %}
         <div class="header-account">
@@ -103,45 +103,63 @@
 
     <!-- Dashboard -->
     <main>
-        <h2>Dashboard</h2>
+       <div class="dashboard-heading">
+    <span class="dashboard-icon">📊</span>
+    <h2>DASHBOARD</h2>
+</div>
+<p class="dashboard-subtitle">
+    Welcome to your Student Management System! Here you can manage student records, update fees, and generate course reports. Use the navigation links above to get started.
+</p>
 
-        <p>Welcome to the College Student Management System.</p>
+        
 
         <div class="dashboard-cards">
 
-            <!-- Total Students -->
-            <div class="dashboard-card">
-                <h3>Total Students</h3>
+        
+<!-- Total Students -->
+<div class="dashboard-card">
 
-                <p class="dashboard-number">
-                    {{ total_students }}
-                </p>
+    <div class="dashboard-icon-box">
+        <span class="student-icon">👨‍🎓</span>
+    </div>
 
-                <a href="{{ url_for('students') }}">
-                    View Students
-                </a>
-            </div>
+    <h3>Total Students</h3>
 
-            <!-- Total Courses -->
-            <div class="dashboard-card">
-                <h3>Total Courses</h3>
+    <p class="dashboard-number">
+        {{ total_students }}
+    </p>
 
-                <p class="dashboard-number">
-                    {{ total_courses }}
-                </p>
+    <a href="{{ url_for('students') }}">
+        View Students →
+    </a>
 
-                <a href="{{ url_for('students') }}">
-                    View Enrollments
-                </a>
-            </div>
+</div>
+
+
+<!-- Total Courses -->
+<div class="dashboard-card">
+
+    <div class="course-icon-box">
+        <span class="course-icon">📚</span>
+    </div>
+
+    <h3>Total Courses</h3>
+
+    <p class="dashboard-number">
+        {{ total_courses }}
+    </p>
+
+    <a href="{{ url_for('students') }}">
+        View Enrollments →
+    </a>
+
+</div>
+
 
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer>
-        <p>Student Management System | College Project</p>
-    </footer>
+  
 
 </body>
 </html>
