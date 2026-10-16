@@ -1,4 +1,4 @@
-
+from decimal import Decimal, InvalidOperation
 import os
 import re
 from functools import wraps
@@ -106,13 +106,11 @@ def login():
                     """,
                     (username,),
                 )
-
                 admin = cursor.fetchone()
 
         finally:
             connection.close()
 
-        # Verify the submitted password against the stored hash.
         password_is_valid = False
 
         if admin and isinstance(admin[2], str):
@@ -123,7 +121,6 @@ def login():
 
         if password_is_valid:
             session.clear()
-
             session["admin_id"] = admin[0]
             session["admin_username"] = admin[1]
             session["admin_role"] = admin[3]
@@ -144,9 +141,7 @@ def login():
 @login_required
 def logout():
     session.clear()
-
     flash("You have been logged out.", "success")
-
     return redirect(url_for("login"))
 
 
@@ -161,71 +156,69 @@ def _student_form_values():
     course = request.form.get("course", "").strip()
     age_text = request.form.get("age", "").strip()
 
-    # Validate name
     if len(name) < 2 or len(name) > 100:
-        abort(
-            400,
-            description="Name must contain 2 to 100 characters.",
-        )
+        abort(400, description="Name must contain 2 to 100 characters.")
 
-    # Validate email
     if len(email) > 100:
-        abort(
-            400,
-            description="Email must not exceed 100 characters.",
-        )
+        abort(400, description="Email must not exceed 100 characters.")
 
     if email and not re.fullmatch(
         r"[^@\s]+@[^@\s]+\.[^@\s]+",
         email,
     ):
-        abort(
-            400,
-            description="Please enter a valid email address.",
-        )
+        abort(400, description="Please enter a valid email address.")
 
-    # Validate phone number
     if phone and not re.fullmatch(
         r"[0-9+\-\s()]{7,15}",
         phone,
     ):
-        abort(
-            400,
-            description="Enter a valid phone number.",
-        )
+        abort(400, description="Enter a valid phone number.")
 
-    # Validate course
     if len(course) > 100:
-        abort(
-            400,
-            description="Course must not exceed 100 characters.",
-        )
+        abort(400, description="Course must not exceed 100 characters.")
 
-    # Validate age
     age = None
 
     if age_text:
         try:
             age = int(age_text)
         except ValueError:
-            abort(
-                400,
-                description="Age must be a whole number.",
-            )
+            abort(400, description="Age must be a whole number.")
 
         if age < 1 or age > 100:
-            abort(
-                400,
-                description="Age must be between 1 and 100.",
-            )
+            abort(400, description="Age must be between 1 and 100.")
 
-    return (
-        name,
-        email or None,
-        phone or None,
-        course or None,
-        age,
-    )
+    return name, email or None, phone or None, course or None, age
+
+
+# --------------------------------------------------
+# Validate fee form data
+# --------------------------------------------------
+
+def _fee_form_values():
+    total_text = request.form.get("total_fee", "").strip()
+    paid_text = request.form.get("paid_amount", "").strip()
+
+    try:
+        total_fee = Decimal(total_text)
+        paid_amount = Decimal(paid_text)
+    except (InvalidOperation, ValueError):
+        return None
+
+    if (
+        not total_fee.is_finite()
+        or not paid_amount.is_finite()
+        or total_fee < 0
+        or paid_amount < 0
+        or paid_amount > total_fee
+        or total_fee > Decimal("99999999.99")
+        or paid_amount > Decimal("99999999.99")
+        or total_fee.as_tuple().exponent < -2
+        or paid_amount.as_tuple().exponent < -2
+    ):
+        return None
+
+    return total_fee, paid_amount
 
 
 # --------------------------------------------------
@@ -250,7 +243,6 @@ def home():
                   AND course != ''
                 """
             )
-
             total_courses = cursor.fetchone()[0]
 
     finally:
@@ -264,64 +256,180 @@ def home():
 
 
 # --------------------------------------------------
-# View and search students
+# View and search students with fee status
 # --------------------------------------------------
 
 @app.route("/students")
 @login_required
 def students():
     search = request.args.get("search", "").strip()
-
     connection = get_connection()
 
     try:
         with connection.cursor() as cursor:
+            query = """
+                SELECT
+                    s.id,
+                    s.name,
+                    s.email,
+                    s.phone,
+                    s.course,
+                    s.age,
+                    COALESCE(NULLIF(f.total_fee, 0), 50000.00) AS total_fee,
+                    COALESCE(f.paid_amount, 0.00) AS paid_amount
+                FROM students AS s
+                LEFT JOIN student_fees AS f
+                    ON s.id = f.student_id
+            """
+
             if search:
                 keyword = f"%{search}%"
-
+                query += """
+                    WHERE s.name LIKE %s
+                       OR s.email LIKE %s
+                       OR s.course LIKE %s
+                """
                 cursor.execute(
-                    """
-                    SELECT *
-                    FROM students
-                    WHERE name LIKE %s
-                       OR email LIKE %s
-                       OR course LIKE %s
-                    ORDER BY id ASC
-                    """,
-                    (
-                        keyword,
-                        keyword,
-                        keyword,
-                    ),
+                    query + " ORDER BY s.id ASC",
+                    (keyword, keyword, keyword),
                 )
-
             else:
-                cursor.execute(
-                    """
-                    SELECT *
-                    FROM students
-                    ORDER BY id ASC
-                    """
-                )
+                cursor.execute(query + " ORDER BY s.id ASC")
 
             student_rows = cursor.fetchall()
 
     finally:
         connection.close()
 
-    total_students = len(student_rows)
-    start_record = 1 if total_students > 0 else 0
-    end_record = total_students
+    students_with_fees = []
+
+    for student in student_rows:
+        total_fee = Decimal(str(student[6]))
+        paid_amount = Decimal(str(student[7]))
+
+        if total_fee > 0 and paid_amount >= total_fee:
+            status = "Paid"
+        elif paid_amount > 0:
+            status = "Partial"
+        else:
+            status = "Pending"
+
+        students_with_fees.append(student + (status,))
+
+    total_students = len(students_with_fees)
 
     return render_template(
         "students.html",
-        students=student_rows,
+        students=students_with_fees,
         search=search,
         page=1,
         total_pages=1,
         total_students=total_students,
-        start_record=start_record,
-        end_record=end_record,
+        start_record=1 if total_students else 0,
+        end_record=total_students,
+    )
+
+
+# --------------------------------------------------
+# Update student info and fees (one page)
+# --------------------------------------------------
+
+@app.route("/update-student/<int:id>", methods=["GET", "POST"])
+@login_required
+def update_student(id):
+    is_admin = session.get("admin_role") == "admin"
+    connection = get_connection()
+
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT id, name, email, phone, course, age
+                FROM students
+                WHERE id = %s
+                """,
+                (id,),
+            )
+            student = cursor.fetchone()
+
+            if student is None:
+                abort(404)
+
+            if request.method == "POST":
+                values = _student_form_values()
+                fee_values = None
+
+                if is_admin:
+                    fee_values = _fee_form_values()
+
+                    if fee_values is None:
+                        flash(
+                            "Enter valid amounts with up to two decimal "
+                            "places. Paid amount cannot exceed total fee.",
+                            "danger",
+                        )
+                        return redirect(url_for("update_student", id=id))
+
+                cursor.execute(
+                    """
+                    UPDATE students
+                    SET name = %s,
+                        email = %s,
+                        phone = %s,
+                        course = %s,
+                        age = %s
+                    WHERE id = %s
+                    """,
+                    (*values, id),
+                )
+
+                if fee_values is not None:
+                    cursor.execute(
+                        """
+                        INSERT INTO student_fees
+                            (student_id, total_fee, paid_amount)
+                        VALUES (%s, %s, %s)
+                        ON DUPLICATE KEY UPDATE
+                            total_fee = VALUES(total_fee),
+                            paid_amount = VALUES(paid_amount)
+                        """,
+                        (id, *fee_values),
+                    )
+
+                connection.commit()
+                flash("Student updated successfully!", "success")
+                return redirect(url_for("students"))
+
+            cursor.execute(
+                """
+                SELECT total_fee, paid_amount
+                FROM student_fees
+                WHERE student_id = %s
+                """,
+                (id,),
+            )
+            fee_record = cursor.fetchone()
+
+    except Exception:
+        connection.rollback()
+        raise
+
+    finally:
+        connection.close()
+
+    total_fee = (
+        fee_record[0]
+        if fee_record and fee_record[0]
+        else Decimal("50000.00")
+    )
+    paid_amount = fee_record[1] if fee_record else Decimal("0.00")
+
+    return render_template(
+        "update_student.html",
+        student=student,
+        total_fee=total_fee,
+        paid_amount=paid_amount,
+        is_admin=is_admin,
     )
 
 
@@ -338,9 +446,7 @@ def course_report():
         with connection.cursor() as cursor:
             cursor.execute(
                 """
-                SELECT
-                    course,
-                    COUNT(*) AS student_count
+                SELECT course, COUNT(*) AS student_count
                 FROM students
                 WHERE course IS NOT NULL
                   AND TRIM(course) != ''
@@ -348,7 +454,6 @@ def course_report():
                 ORDER BY course
                 """
             )
-
             course_rows = cursor.fetchall()
 
     finally:
@@ -380,13 +485,11 @@ def add_student():
         with connection.cursor() as cursor:
             cursor.execute(
                 """
-                INSERT INTO students
-                    (name, email, phone, course, age)
+                INSERT INTO students (name, email, phone, course, age)
                 VALUES (%s, %s, %s, %s, %s)
                 """,
                 values,
             )
-
         connection.commit()
 
     except Exception:
@@ -397,74 +500,7 @@ def add_student():
         connection.close()
 
     flash("Student added successfully!", "success")
-
     return redirect(url_for("students"))
-
-
-# --------------------------------------------------
-# Edit an existing student
-# --------------------------------------------------
-
-@app.route("/edit-student/<int:id>", methods=["GET", "POST"])
-@login_required
-def edit_student(id):
-    connection = get_connection()
-
-    try:
-        with connection.cursor() as cursor:
-            if request.method == "POST":
-                values = _student_form_values()
-
-                cursor.execute(
-                    "SELECT id FROM students WHERE id = %s",
-                    (id,),
-                )
-
-                if cursor.fetchone() is None:
-                    abort(404)
-
-                cursor.execute(
-                    """
-                    UPDATE students
-                    SET name = %s,
-                        email = %s,
-                        phone = %s,
-                        course = %s,
-                        age = %s
-                    WHERE id = %s
-                    """,
-                    (*values, id),
-                )
-
-                connection.commit()
-
-            else:
-                cursor.execute(
-                    "SELECT * FROM students WHERE id = %s",
-                    (id,),
-                )
-
-                student = cursor.fetchone()
-
-                if student is None:
-                    abort(404)
-
-    except Exception:
-        if request.method == "POST":
-            connection.rollback()
-        raise
-
-    finally:
-        connection.close()
-
-    if request.method == "POST":
-        flash("Student updated successfully!", "success")
-        return redirect(url_for("students"))
-
-    return render_template(
-        "edit_student.html",
-        student=student,
-    )
 
 
 # --------------------------------------------------
@@ -483,7 +519,6 @@ def delete_student(id):
                 "DELETE FROM students WHERE id = %s",
                 (id,),
             )
-
             deleted_count = cursor.rowcount
 
         connection.commit()
@@ -521,21 +556,12 @@ def export_students():
                 ORDER BY id ASC
                 """
             )
-
             rows = cursor.fetchall()
 
     finally:
         connection.close()
 
-    columns = [
-        "ID",
-        "Name",
-        "Email",
-        "Phone",
-        "Course",
-        "Age",
-    ]
-
+    columns = ["ID", "Name", "Email", "Phone", "Course", "Age"]
     dataframe = pd.DataFrame(rows, columns=columns)
     output = BytesIO()
 
