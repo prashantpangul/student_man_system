@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account - Student Management System</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 30px 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+        }
+
+        .register-container {
+            width: 100%;
+            max-width: 440px;
+            padding: 32px;
+            background: #ffffff;
+            border-radius: 14px;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.10);
+        }
+
+        .register-container h1 {
+            margin: 0 0 10px;
+            color: #1e293b;
+            font-size: 25px;
+            text-align: center;
+        }
+
+        .register-container hr {
+            margin: 20px 0;
+            border: 0;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .register-container h2 {
+            margin: 0 0 10px;
+            color: #2563eb;
+            font-size: 23px;
+            text-align: center;
+        }
+
+        .register-description {
+            margin-bottom: 24px;
+            color: #64748b;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .register-container form p {
+            margin: 0 0 18px;
+        }
+
+        .register-container label {
+            display: block;
+            margin-bottom: 7px;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        .register-container input {
+            display: block;
+            width: 100%;
+            padding: 12px 13px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            background: #ffffff;
+            font-size: 15px;
+            outline: none;
+        }
+
+        .register-container input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .register-container button {
+            width: 100%;
+            padding: 13px;
+            border: none;
+            border-radius: 7px;
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .register-container button:hover {
+            background: #1d4ed8;
+        }
+
+        .login-link {
+            margin: 22px 0 0;
+            color: #64748b;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .login-link a {
+            color: #2563eb;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .register-message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            overflow-wrap: anywhere;
+        }
+
+        .register-message.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .register-message.error,
+        .register-message.danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .register-message.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        @media (max-width: 480px) {
+            .register-container {
+                padding: 24px 20px;
+            }
+
+            .register-container h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="register-container">
+
+        <h1>Student Management System</h1>
+
+        <hr>
+
+        <h2>Create Your Account</h2>
+
+        <p class="register-description">
+            Register an account to manage your own student records.
+        </p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <p class="register-message {{ category }}" role="status">
+                        {{ message }}
+                    </p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('register_user') }}" method="POST">
+
+            <p>
+                <label for="username">Username:</label>
+
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    minlength="3"
+                    maxlength="50"
+                    pattern="[A-Za-z0-9_]+"
+                    title="Use only letters, numbers, and underscores."
+                    autocomplete="username"
+                    required
+                >
+            </p>
+
+            <p>
+                <label for="password">Password:</label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    minlength="8"
+                    autocomplete="new-password"
+                    required
+                >
+            </p>
+
+            <p>
+                <label for="confirm_password">Confirm Password:</label>
+
+                <input
+                    type="password"
+                    id="confirm_password"
+                    name="confirm_password"
+                    minlength="8"
+                    autocomplete="new-password"
+                    required
+                >
+            </p>
+
+            <p>
+                <button type="submit">Create Account</button>
+            </p>
+
+        </form>
+
+        <p class="login-link">
+            Already have an account?
+            <a href="{{ url_for('login') }}">Login here</a>
+        </p>
+
+    </div>
+
+</body>
+</html>

@@ -1,23 +1,56 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Course-wise Student Report</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        /* Back icon visible only to root administrator */
+        .root-back-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            margin-left: 10px;
+            border-radius: 7px;
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: bold;
+            line-height: 1;
+            text-decoration: none;
+            vertical-align: middle;
+        }
+
+        .root-back-icon:hover {
+            background: #1d4ed8;
+            color: #ffffff;
+        }
+    </style>
 </head>
 
 <body>
     <h1>Student Management System</h1>
 
     <nav>
-        <a href="/">Home</a> |
-        <a href="/students">Student List</a> |
-        <a href="/add-student">Add Student</a> |
-        <a href="/course-report">Course Report</a>
+        <a href="{{ url_for('home') }}">Home</a> |
+        <a href="{{ url_for('students') }}">Student List</a> |
+        <a href="{{ url_for('add_student') }}">Add Student</a> |
+        <a href="{{ url_for('course_report') }}">Course Report</a>
+
+        {% if session.get('is_root', false) %}
+            <a href="{{ url_for('manage_users') }}"
+               class="root-back-icon"
+               title="Back to Manage Users"
+               aria-label="Back to Manage Users">↩</a>
+        {% endif %}
     </nav>
 
     <hr>
@@ -52,6 +85,9 @@
 
     <h3>Total Enrollment: {{ total_enrollment }}</h3>
 
-    <p><a href="/">Back to Dashboard</a></p>
+    <p>
+        <a href="{{ url_for('home') }}">Back to Dashboard</a>
+    </p>
 </body>
+
 </html>

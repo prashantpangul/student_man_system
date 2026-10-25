@@ -8,6 +8,31 @@
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        /* Back icon visible only to root administrator */
+        .root-back-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            margin-left: 10px;
+            border-radius: 7px;
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: bold;
+            line-height: 1;
+            text-decoration: none;
+            vertical-align: middle;
+        }
+
+        .root-back-icon:hover {
+            background: #1d4ed8;
+            color: #ffffff;
+        }
+    </style>
 </head>
 
 <body>
@@ -18,6 +43,13 @@
         <a href="{{ url_for('students') }}">Student List</a> |
         <a href="{{ url_for('add_student') }}">Add Student</a> |
         <a href="{{ url_for('course_report') }}">Course Report</a>
+
+        {% if session.get('is_root', false) %}
+            <a href="{{ url_for('manage_users') }}"
+               class="root-back-icon"
+               title="Back to Manage Users"
+               aria-label="Back to Manage Users">↩</a>
+        {% endif %}
     </nav>
 
     <hr>
@@ -65,13 +97,9 @@
                 {% for student in students %}
                 <tr>
                     <td>{{ student[0] }}</td>
-
                     <td>{{ student[1] }}</td>
-
                     <td>{{ student[2] or '-' }}</td>
-
                     <td>{{ student[3] or '-' }}</td>
-
                     <td>{{ student[4] or '-' }}</td>
 
                     <td>
@@ -89,10 +117,8 @@
                     <td>
                         {% if student[8] == 'Paid' %}
                             <span class="fee-paid">Paid</span>
-
                         {% elif student[8] == 'Partial' %}
                             <span class="fee-partial">Partially Paid</span>
-
                         {% else %}
                             <span class="fee-pending">Pending</span>
                         {% endif %}
@@ -100,7 +126,6 @@
 
                     <!-- Action buttons -->
                     <td class="action-cell">
-
                         <a
                             href="{{ url_for('update_student', id=student[0]) }}"
                             class="edit-link">
@@ -108,7 +133,6 @@
                         </a>
 
                         {% if session.get('admin_role') == 'admin' %}
-
                             |
 
                             <form
@@ -123,9 +147,7 @@
                                     Delete
                                 </button>
                             </form>
-
                         {% endif %}
-
                     </td>
                 </tr>
 

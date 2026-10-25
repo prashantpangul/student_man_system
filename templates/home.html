@@ -1,4 +1,4 @@
-
+ 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -57,6 +57,29 @@
                 visibility: hidden;
             }
         }
+
+        /* Root administrator back icon */
+        .root-back-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            margin-left: 10px;
+            border-radius: 7px;
+            background: #2563eb;
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: bold;
+            line-height: 1;
+            text-decoration: none;
+            vertical-align: middle;
+        }
+
+        .root-back-icon:hover {
+            background: #1d4ed8;
+            color: #ffffff;
+        }
     </style>
 </head>
 
@@ -86,6 +109,13 @@
         <a href="{{ url_for('students') }}">Student List</a> |
         <a href="{{ url_for('add_student') }}">Add Student</a> |
         <a href="{{ url_for('course_report') }}">Course Report</a>
+
+        {% if session.get('is_root', false) %}
+            <a href="{{ url_for('manage_users') }}"
+               class="root-back-icon"
+               title="Back to Manage Users"
+               aria-label="Back to Manage Users">↩</a>
+        {% endif %}
     </nav>
 
     <!-- Popup success and error messages -->
@@ -103,63 +133,60 @@
 
     <!-- Dashboard -->
     <main>
-       <div class="dashboard-heading">
-    <span class="dashboard-icon">📊</span>
-    <h2>DASHBOARD</h2>
-</div>
-<p class="dashboard-subtitle">
-    Welcome to your Student Management System! Here you can manage student records, update fees, and generate course reports. Use the navigation links above to get started.
-</p>
 
-        
+        <div class="dashboard-heading">
+            <span class="dashboard-icon">📊</span>
+            <h2>DASHBOARD</h2>
+        </div>
+
+        <p class="dashboard-subtitle">
+            Welcome to your Student Management System! Here you can
+            manage student records, update fees, and generate course
+            reports. Use the navigation links above to get started.
+        </p>
 
         <div class="dashboard-cards">
 
-        
-<!-- Total Students -->
-<div class="dashboard-card">
+            <!-- Total Students -->
+            <div class="dashboard-card">
 
-    <div class="dashboard-icon-box">
-        <span class="student-icon">👨‍🎓</span>
-    </div>
+                <div class="dashboard-icon-box">
+                    <span class="student-icon">👨‍🎓</span>
+                </div>
 
-    <h3>Total Students</h3>
+                <h3>Total Students</h3>
 
-    <p class="dashboard-number">
-        {{ total_students }}
-    </p>
+                <p class="dashboard-number">
+                    {{ total_students }}
+                </p>
 
-    <a href="{{ url_for('students') }}">
-        View Students →
-    </a>
+                <a href="{{ url_for('students') }}">
+                    View Students →
+                </a>
 
-</div>
+            </div>
 
+            <!-- Total Courses -->
+            <div class="dashboard-card">
 
-<!-- Total Courses -->
-<div class="dashboard-card">
+                <div class="course-icon-box">
+                    <span class="course-icon">📚</span>
+                </div>
 
-    <div class="course-icon-box">
-        <span class="course-icon">📚</span>
-    </div>
+                <h3>Total Courses</h3>
 
-    <h3>Total Courses</h3>
+                <p class="dashboard-number">
+                    {{ total_courses }}
+                </p>
 
-    <p class="dashboard-number">
-        {{ total_courses }}
-    </p>
+                <a href="{{ url_for('students') }}">
+                    View Enrollments →
+                </a>
 
-    <a href="{{ url_for('students') }}">
-        View Enrollments →
-    </a>
-
-</div>
-
+            </div>
 
         </div>
     </main>
-
-  
 
 </body>
 </html>
